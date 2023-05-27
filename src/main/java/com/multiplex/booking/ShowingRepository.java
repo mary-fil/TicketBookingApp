@@ -1,7 +1,7 @@
 package com.multiplex.booking;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-//import org.springframework.stereotype.Repository;
+//mport org.springframework.stereotype.Repository;
 //import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -15,6 +15,9 @@ interface ShowingRepository extends JpaRepository<Showing, Long> {
 
     List<Showing> findByShowingTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
 
-    //@Query //(SELECT t from Showing t WHERE )
-    //List<Showing> findByShowingTimeInterval(LocalDateTime showingTime@plusHours(1));
+    Showing findByMovieTitle(String movieTitle);
+
+    Showing findByMovieTitleAndId(String movieTitle, Long roomId);
+
+    //Showing getReservation(String movieTitle, int roomId, int row_nr, int column_nr, String name, String surname);
 }

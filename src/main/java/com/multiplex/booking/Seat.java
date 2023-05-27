@@ -13,6 +13,8 @@ public class Seat {
     private int column_nr;
     // do zmiany na imie i nazwisko uzytkownika?
     private boolean reserved;
+    private String name;
+    private String surname;
 
     @Column(name = "showing_id")
     private Long showingId;
@@ -67,5 +69,19 @@ public class Seat {
         this.showingId = showingId;
     }
 
-    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
 }
