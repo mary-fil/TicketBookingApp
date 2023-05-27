@@ -3,7 +3,9 @@ package com.multiplex.booking;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,8 @@ class BookingController{
     // Aggregate root
     @GetMapping("/showings")
     List<Showing> all(){
-        return showings.findAll();
+        Sort sorted = Sort.by(Sort.Direction.ASC, "movieTitle", "showingTime");
+        return showings.findAll(sorted);
     }
 
     @PostMapping("/showings")

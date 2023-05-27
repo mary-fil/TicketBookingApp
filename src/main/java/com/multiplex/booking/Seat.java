@@ -6,24 +6,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
+@Table(name = "seats")
 public class Seat {
     private @Id @GeneratedValue Long id;
-    private int row;
-    private int column;
+    private int row_nr;
+    private int column_nr;
     // do zmiany na imie i nazwisko uzytkownika?
     private boolean reserved;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Showing showing;
+    @Column(name = "showing_id")
+    private Long showingId;
 
     public Seat() {
     }
 
-    public Seat(int row, int column, boolean reserved, Showing showing) {
-        this.row = row;
-        this.column = column;
+    public Seat(int row_nr, int column_nr, boolean reserved, Long showingId) {
+        this.row_nr = row_nr;
+        this.column_nr = column_nr;
         this.reserved = reserved;
-        this.showing = showing;
+        this.showingId = showingId;
     }
 
     public Long getId() {
@@ -34,20 +35,20 @@ public class Seat {
         this.id = id;
     }
 
-    public int getRow() {
-        return row;
+    public int getRow_nr() {
+        return row_nr;
     }
 
-    public void setRow(int row) {
-        this.row = row;
+    public void setRow_nr(int row_nr) {
+        this.row_nr = row_nr;
     }
 
-    public int getColumn() {
-        return column;
+    public int getColumn_nr() {
+        return column_nr;
     }
 
-    public void setColumn(int column) {
-        this.column = column;
+    public void setColumn_nr(int column_nr) {
+        this.column_nr = column_nr;
     }
 
     public boolean isReserved() {
@@ -58,11 +59,13 @@ public class Seat {
         this.reserved = reserved;
     }
 
-    public Showing getShowings() {
-        return showing;
+    public Long getShowingId() {
+        return showingId;
     }
 
-    public void setShowings(Showing showing) {
-        this.showing = showing;
+    public void setShowingId(Long showingId) {
+        this.showingId = showingId;
     }
+
+    
 }
