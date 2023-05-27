@@ -2,8 +2,10 @@ package com.multiplex.booking;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -14,16 +16,18 @@ public class Showing {
     private LocalDateTime showingTime;
     private String movieTitle;
     private int roomNr;
-    private List<Integer> seats;
+
+    @OneToMany(mappedBy = "showings", cascade = CascadeType.ALL)
+    private List<Seat> seats;
 
     Showing() {
     }
 
-    Showing(LocalDateTime showingTime, String movieTitle, int roomNr,  List<Integer> seats) {
+    Showing(LocalDateTime showingTime, String movieTitle, int roomNr) {
         this.showingTime = showingTime;
         this.movieTitle = movieTitle;
         this.roomNr = roomNr;
-        this.seats = seats;
+        this.seats = generateSeats(10, 6);
     }
 
     // get
@@ -43,7 +47,7 @@ public class Showing {
         return this.roomNr;
     }
 
-    public List<Integer> getList(){
+    public List<Seat> getList(){
         return this.seats;
     }
 
@@ -64,7 +68,7 @@ public class Showing {
         this.roomNr = roomNr;
     }
 
-    public void setList(List<Integer> seats){
+    public void setList(List<Seat> seats){
         this.seats = seats;
     }
 
@@ -88,4 +92,16 @@ public class Showing {
         return Objects.hash(this.id, this.showingTime, this.movieTitle, this.roomNr, this.seats);
     }
 
+    private List<Seat> generateSeats(int numRows, int numColumns) {
+        List<Seat> generatedSeats = new ArrayList<>();
+
+        for (int row = 1; row <= numRows; row++) {
+            for (int column = 1; column <= numColumns; column++) {
+                Seat seat = new Seat(row, column, false, this);
+                seats.add(seat);
+            }
+        }
+
+        return generatedSeats;
+    }
 }
