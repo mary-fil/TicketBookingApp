@@ -39,12 +39,6 @@ class BookingController {
 
     // Single item
 
-    @GetMapping("/showingsById/{id}")
-    Showing one(@PathVariable Long id) {
-
-        return showings.findById(id).orElseThrow(() -> new ShowingNotFoundException(id));
-    }
-
     @PutMapping("/showingsById/{id}")
     Showing replaceShowing(@RequestBody Showing newShowing, @PathVariable Long id) {
 
@@ -87,33 +81,84 @@ class BookingController {
     // what if there are two screenings with the same title?
     // then -> choose by id?
 
-    @GetMapping("/showingsByTitle/{movieTitle}")
-    Showing one(@PathVariable("movieTitle") String movieTitle) {
+    @GetMapping("/showingsById/{id}")
+    Showing one(@PathVariable Long id) {
 
-        return showings.findByMovieTitle(movieTitle);
-        // .orElseThrow(() -> new ShowingNotFoundException(movieTitle));
-    }
-
-    @GetMapping("/showingsByTitleAndId/{movieTitle}/{roomId}")
-    Showing getByMovieTitleAndId(@PathVariable("movieTitle") String movieTitle, @PathVariable("roomId") Long roomId) {
-        return showings.findByMovieTitleAndId(movieTitle, roomId);
-        // .orElseThrow(() -> new ShowingNotFoundException(movieTitle, id));
+        return showings.findById(id).orElseThrow(() -> new ShowingNotFoundException(id));
     }
 
     // user chooses seats, and gives the name of the person doing the reservation
     // (name and surname)
+    // TO DO
+    // how to handle total amount? another class user?
 
-    @GetMapping("/showings/{movieTitle}/{roomId}/{row_nr}/{column_nr}/{name}/{surname}")
+    @PutMapping("/ReservationOfSeats")
+    Showing replaceSeat(@RequestBody List<Seat> newSeats) {
+
+        Showing showing = showings.findById(newSeats.get(0).getShowingId())
+        .orElseThrow(() -> new ShowingNotFoundException(newSeats.get(0).getShowingId()));
+
+        Set<Seat> seats = showing.getSeats();
+
+        for (Seat newSeat : newSeats) {
+            Optional<Seat> seatOptional = seats.stream()
+                .filter(seat -> seat.getId().equals(newSeat.getId()))
+                .findFirst();
+
+            if (seatOptional.isPresent()) {
+                Seat seat = seatOptional.get();
+                seat.setReserved(true);
+                seat.setName(newSeat.getName());
+                seat.setSurname(newSeat.getSurname());
+            } else {
+                //throw new SeatNotFoundException(newSeat.getId());
+            }
+        }
+
+        return showings.save(showing);
+    }
+
+    @PutMapping("/ReservationBySeatId/{id}")
+    Showing replaceSeat(@RequestBody Seat newSeat, @PathVariable Long id) {
+
+        return showings.findById(newSeat.getShowingId())
+            .map(showing -> {
+                // Retrieve the set of seats in the showing
+                Set<Seat> seats = showing.getSeats();
+
+                // Find the seat with the specified ID
+                Optional<Seat> seatOptional = seats.stream()
+                    .filter(seat -> seat.getId().equals(id))
+                    .findFirst();
+
+                if (seatOptional.isPresent()) {
+                    Seat seat = seatOptional.get();
+                    // Update the seat properties
+                    seat.setReserved(true);
+                    seat.setName(newSeat.getName());
+                    seat.setSurname(newSeat.getSurname());
+                    seat.setTicketType(newSeat.getTicketType());
+                } else {
+                    // Handle the case when the seat is not found
+                    //throw new SeatNotFoundException(id);
+                }
+
+                return showings.save(showing);
+            })
+            .orElseThrow(() -> new ShowingNotFoundException(newSeat.getShowingId()));
+    }
+
+    @PutMapping("/showings/{id}/{row_nr}/{column_nr}/{name}/{surname}/{ticketType}")
     public Showing getReservation(
-        @PathVariable("movieTitle") String movieTitle, 
-        @PathVariable("roomId") Long roomId,
+        @PathVariable("id") Long id,
         @PathVariable("row_nr") int row_nr,
         @PathVariable("column_nr") int column_nr,
         @PathVariable("name") String name,
-        @PathVariable("surname") String surname) {
+        @PathVariable("surname") String surname,
+        @PathVariable("ticketType") String ticketType) {
 
         // Retrieve showing based on movie title and room ID
-        Showing showing = showings.findByMovieTitleAndId(movieTitle, roomId);
+        Showing showing = showings.findById(id).orElseThrow(() -> new ShowingNotFoundException(id));
         
         // Retrieve the list of seats in the showing
         Set<Seat> seats = showing.getSeats();
@@ -129,6 +174,7 @@ class BookingController {
             // Update the seat's information
             seat.setReserved(true);
             // TO DO
+            //User user = findByNameAndSurname(name, surname);
             seat.setName(name);
             seat.setSurname(surname);
         } else {

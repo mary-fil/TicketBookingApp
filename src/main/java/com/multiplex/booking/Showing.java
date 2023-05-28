@@ -5,10 +5,13 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "showings")
@@ -29,7 +32,7 @@ public class Showing {
         this.showingTime = showingTime;
         this.movieTitle = movieTitle;
         this.roomNr = roomNr;
-        this.seats = generateSeats(1, 10);
+        this.seats = generateSeats(2, 8);
     }
 
     private Set<Seat> generateSeats(int numRows, int numColumns) {

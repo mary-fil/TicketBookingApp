@@ -11,10 +11,11 @@ public class Seat {
     private @Id @GeneratedValue Long id;
     private int row_nr;
     private int column_nr;
-    // do zmiany na imie i nazwisko uzytkownika?
+    
     private boolean reserved;
     private String name;
     private String surname;
+    private String ticketType;
 
     @Column(name = "showing_id")
     private Long showingId;
@@ -83,5 +84,13 @@ public class Seat {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getTicketType() {
+        return ticketType;
+    }
+
+    public void setTicketType(String ticketType) {
+        this.ticketType = ticketType;
     }
 }

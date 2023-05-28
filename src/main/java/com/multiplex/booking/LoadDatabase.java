@@ -19,7 +19,7 @@ class LoadDatabase {
     return args -> {
       log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 20, 0), "b", 3)));
       log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 18, 0), "a", 1)));
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 18, 0), "a", 2)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 14, 0), "a", 2)));
     };
   }
 }
