@@ -6,10 +6,13 @@ import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -19,7 +22,10 @@ public class Showing {
     private @Id @GeneratedValue Long id;
     private LocalDateTime showingTime;
     private String movieTitle;
-    private int roomNr;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "showing_id", referencedColumnName = "id")
@@ -28,11 +34,13 @@ public class Showing {
     Showing() {
     }
 
-    Showing(LocalDateTime showingTime, String movieTitle, int roomNr) {
+    Showing(LocalDateTime showingTime, String movieTitle, Room room) {
+        //room.showings.add(this);
+
         this.showingTime = showingTime;
         this.movieTitle = movieTitle;
-        this.roomNr = roomNr;
-        this.seats = generateSeats(2, 8);
+        this.room = room;
+        this.seats = generateSeats(room.getNrOfRows(), room.getNrOfColumns());
     }
 
     private Set<Seat> generateSeats(int numRows, int numColumns) {
@@ -59,13 +67,13 @@ public class Showing {
         Showing showing = (Showing) o;
 
         return Objects.equals(this.id, showing.id) && Objects.equals(this.showingTime, showing.showingTime)
-                && Objects.equals(this.movieTitle, showing.movieTitle) && Objects.equals(this.roomNr, showing.roomNr);
+                && Objects.equals(this.movieTitle, showing.movieTitle) && Objects.equals(this.room, showing.room);
 
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.showingTime, this.movieTitle, this.roomNr, this.seats);
+        return Objects.hash(this.id, this.showingTime, this.movieTitle, this.room, this.seats);
     }
 
     public Long getId() {
@@ -92,14 +100,6 @@ public class Showing {
         this.movieTitle = movieTitle;
     }
 
-    public int getRoomNr() {
-        return roomNr;
-    }
-
-    public void setRoomNr(int roomNr) {
-        this.roomNr = roomNr;
-    }
-
     public Set<Seat> getSeats() {
         return seats;
     }
@@ -108,5 +108,11 @@ public class Showing {
         this.seats = seats;
     }
 
+    public Room getRoom() {
+        return room;
+    }
 
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }

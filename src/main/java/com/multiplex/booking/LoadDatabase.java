@@ -13,13 +13,27 @@ class LoadDatabase {
 
   private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
 
+  Room room1 = new Room(1,2,10);
+  Room room2 = new Room(2,2,10);
+  Room room3 = new Room(3,2,10);
+
   @Bean
-  CommandLineRunner initDatabase(ShowingRepository repository) {
+  CommandLineRunner initDatabaseRoom(RoomRepository repository) {
+    
+    return args -> {
+      log.info("Preloading " + repository.save(room1));
+      log.info("Preloading " + repository.save(room2));
+      log.info("Preloading " + repository.save(room3));
+    };
+  }
+
+  @Bean
+  CommandLineRunner initDatabaseShowing(ShowingRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 20, 0), "b", 3)));
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 18, 0), "a", 1)));
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 14, 0), "a", 2)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 20, 0), "b", room1)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 18, 0), "a", room2)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 14, 0), "a", room3)));
     };
   }
 }

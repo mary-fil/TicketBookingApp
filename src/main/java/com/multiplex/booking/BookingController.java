@@ -46,7 +46,7 @@ class BookingController {
                 .map(showing -> {
                     showing.setShowingTime(newShowing.getShowingTime());
                     showing.setMovieTitle(newShowing.getMovieTitle());
-                    showing.setRoomNr(newShowing.getRoomNr());
+                    showing.setRoom(newShowing.getRoom());
                     return showings.save(showing);
                 })
                 .orElseGet(() -> {
