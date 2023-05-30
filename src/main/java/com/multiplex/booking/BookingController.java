@@ -107,14 +107,22 @@ class BookingController {
 
             if (seatOptional.isPresent()) {
                 Seat seat = seatOptional.get();
+
+                // if it is already reserved return false? dont save?
+                if(seat.isReserved()) throw new CannotReserve();
+
                 seat.setReserved(true);
                 seat.setName(newSeat.getName());
                 seat.setSurname(newSeat.getSurname());
+                seat.setTicketType(newSeat.getTicketType());
+
             } else {
-                //throw new SeatNotFoundException(newSeat.getId());
+                throw new SeatNotFoundException(newSeat.getId());
             }
         }
 
+        if(!showing.isValid()) throw new CannotReserve();
+        
         return showings.save(showing);
     }
 
@@ -140,7 +148,7 @@ class BookingController {
                     seat.setTicketType(newSeat.getTicketType());
                 } else {
                     // Handle the case when the seat is not found
-                    //throw new SeatNotFoundException(id);
+                    throw new SeatNotFoundException(id);
                 }
 
                 return showings.save(showing);

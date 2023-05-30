@@ -56,6 +56,39 @@ public class Showing {
         return generatedSeats;
     }
 
+    boolean isValid(){
+
+        // create multidimensional array
+        Seat[][] seatArray = new Seat[room.getNrOfRows()][room.getNrOfColumns()];
+        
+        for(int i = 1; i <= room.getNrOfRows(); i++){
+            for(int j = 1; j <= room.getNrOfColumns(); j++){
+
+                // find seat by column and by row
+                for (Seat seat : seats) {
+                    if (seat.getRow_nr() == i && seat.getColumn_nr() == j) {
+                        seatArray[i-1][j-1] = seat;
+                        break;
+                    }
+                }
+            }
+        }
+
+        //find not reserved seat and check if gap is 1
+
+        for(int i = 0; i < room.getNrOfRows(); i++){
+
+            for(int j = 0; j < room.getNrOfColumns(); j++){
+
+                if(seatArray[i][j].isReserved() == false && j != 1 && j != room.getNrOfColumns()) {
+                    if(seatArray[i][j-1].isReserved() && seatArray[i][j+1].isReserved()) return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
     @Override
     public boolean equals(Object o) {
 

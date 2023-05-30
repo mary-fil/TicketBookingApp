@@ -1,5 +1,7 @@
 package com.multiplex.booking;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,11 @@ public class Seat {
     private Long showingId;
 
     public Seat() {
+    }
+
+    public Seat(int row_nr,int column_nr) {
+        this.row_nr = row_nr;
+        this.column_nr = column_nr;
     }
 
     public Seat(int row_nr, int column_nr, boolean reserved, Long showingId) {
@@ -93,5 +100,17 @@ public class Seat {
 
     public void setTicketType(String ticketType) {
         this.ticketType = ticketType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Seat))
+            return false;
+        Seat seat = (Seat) o;
+
+        return Objects.equals(this.column_nr, seat.column_nr)
+        && Objects.equals(this.row_nr, seat.row_nr);
     }
 }

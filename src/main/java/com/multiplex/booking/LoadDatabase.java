@@ -13,7 +13,7 @@ class LoadDatabase {
 
   private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
 
-  Room room1 = new Room(1,2,10);
+  Room room1 = new Room(1,1,5);
   Room room2 = new Room(2,2,10);
   Room room3 = new Room(3,2,10);
 
