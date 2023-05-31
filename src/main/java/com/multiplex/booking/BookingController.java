@@ -93,12 +93,18 @@ class BookingController {
     // how to handle total amount? another class user?
 
     @PutMapping("/ReservationOfSeats")
-    Showing replaceSeat(@RequestBody List<Seat> newSeats) {
+    void replaceSeat(@RequestBody List<Seat> newSeats) {
 
         Showing showing = showings.findById(newSeats.get(0).getShowingId())
         .orElseThrow(() -> new ShowingNotFoundException(newSeats.get(0).getShowingId()));
 
+        // check time, reservation should be before the movie
+        // int comparison = showing.getShowingTime().minusMinutes(15).compareTo(LocalDateTime.now());
+        // if(comparison < 0) throw new CannotReserve();
+
         Set<Seat> seats = showing.getSeats();
+
+        float total = 0;
 
         for (Seat newSeat : newSeats) {
             Optional<Seat> seatOptional = seats.stream()
@@ -109,21 +115,26 @@ class BookingController {
                 Seat seat = seatOptional.get();
 
                 // if it is already reserved return false? dont save?
-                if(seat.isReserved()) throw new CannotReserve();
+                if(seat.isReserved()) throw new CannotReserveException();
 
                 seat.setReserved(true);
                 seat.setName(newSeat.getName());
                 seat.setSurname(newSeat.getSurname());
                 seat.setTicketType(newSeat.getTicketType());
 
+                if(newSeat.getTicketType()=="Adult") total += 25;
+                if(newSeat.getTicketType()=="Student") total += 18;
+                if(newSeat.getTicketType()=="Child") total += 12.5;
+
             } else {
                 throw new SeatNotFoundException(newSeat.getId());
             }
         }
 
-        if(!showing.isValid()) throw new CannotReserve();
-        
-        return showings.save(showing);
+        if(!showing.isValid()) throw new CannotReserveException();
+
+        showings.save(showing);
+        //return 
     }
 
     @PutMapping("/ReservationBySeatId/{id}")
