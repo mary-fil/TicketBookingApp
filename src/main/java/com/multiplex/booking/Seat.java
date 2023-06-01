@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "seats")
@@ -14,10 +16,16 @@ public class Seat {
     private @Id @GeneratedValue Long id;
     private int row_nr;
     private int column_nr;
-    
     private boolean reserved;
+
+    @Size(min = 3, message = "Name must be at least 3 characters long")
+    @Pattern(regexp = "^[A-Z].*", message = "Name must start with a capital letter")
     private String name;
+
+    @Size(min = 3, message = "Surname must be at least 3 characters long")
+    @Pattern(regexp = "^[A-Z].*", message = "Name must start with a capital letter")
     private String surname;
+
     private String ticketType;
 
     @Column(name = "showing_id")

@@ -1,5 +1,6 @@
 package com.multiplex.booking;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 @RestController
 class BookingController {
     private final ShowingRepository showings;
     final int hour = 1;
+    final double adultTicket = 25;
+    final double studentTicket = 18;
+    final double childTicket = 12.5;
 
     BookingController(ShowingRepository showings) {
         this.showings = showings;
@@ -93,18 +99,21 @@ class BookingController {
     // how to handle total amount? another class user?
 
     @PutMapping("/ReservationOfSeats")
-    void replaceSeat(@RequestBody List<Seat> newSeats) {
+    ReservationResponse replaceSeat(@Valid @RequestBody List<Seat> newSeats) {
 
         Showing showing = showings.findById(newSeats.get(0).getShowingId())
         .orElseThrow(() -> new ShowingNotFoundException(newSeats.get(0).getShowingId()));
 
         // check time, reservation should be before the movie
-        // int comparison = showing.getShowingTime().minusMinutes(15).compareTo(LocalDateTime.now());
-        // if(comparison < 0) throw new CannotReserve();
+
+        Duration duration = Duration.between(LocalDateTime.now(),showing.getShowingTime());
+        long minutes = duration.toMinutes();
+
+        if(minutes <= 15) throw new CannotReserveException();
 
         Set<Seat> seats = showing.getSeats();
 
-        float total = 0;
+        double total = 0;
 
         for (Seat newSeat : newSeats) {
             Optional<Seat> seatOptional = seats.stream()
@@ -114,7 +123,7 @@ class BookingController {
             if (seatOptional.isPresent()) {
                 Seat seat = seatOptional.get();
 
-                // if it is already reserved return false? dont save?
+                // if it is already reserved
                 if(seat.isReserved()) throw new CannotReserveException();
 
                 seat.setReserved(true);
@@ -122,9 +131,9 @@ class BookingController {
                 seat.setSurname(newSeat.getSurname());
                 seat.setTicketType(newSeat.getTicketType());
 
-                if(newSeat.getTicketType()=="Adult") total += 25;
-                if(newSeat.getTicketType()=="Student") total += 18;
-                if(newSeat.getTicketType()=="Child") total += 12.5;
+                if(newSeat.getTicketType().equals("adult")) total += adultTicket;
+                if(newSeat.getTicketType().equals("student")) total += studentTicket;
+                if(newSeat.getTicketType().equals("child")) total += childTicket;
 
             } else {
                 throw new SeatNotFoundException(newSeat.getId());
@@ -134,7 +143,12 @@ class BookingController {
         if(!showing.isValid()) throw new CannotReserveException();
 
         showings.save(showing);
-        //return 
+        
+        ReservationResponse response = new ReservationResponse();
+        response.setTotal(total);
+        response.setReservationExpirationTime(showing.getShowingTime().minusMinutes(15));
+        
+        return response;
     }
 
     @PutMapping("/ReservationBySeatId/{id}")
