@@ -5,3 +5,5 @@ class CannotReserveException extends RuntimeException{
         super("Could not reserve seat(s)");
     }
 }
+
+
