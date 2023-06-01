@@ -31,9 +31,9 @@ class LoadDatabase {
   CommandLineRunner initDatabaseShowing(ShowingRepository repository) {
 
     return args -> {
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 20, 0), "b", room1)));
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 18, 0), "a", room2)));
-      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 24, 14, 0), "a", room3)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 7, 24, 20, 0), "b", room1)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 6, 24, 18, 0), "a", room2)));
+      log.info("Preloading " + repository.save(new Showing(LocalDateTime.of(2023, 5, 31, 21, 0), "a", room3)));
     };
   }
 }

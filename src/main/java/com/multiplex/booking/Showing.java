@@ -80,7 +80,7 @@ public class Showing {
 
             for(int j = 0; j < room.getNrOfColumns(); j++){
 
-                if(seatArray[i][j].isReserved() == false && j != 1 && j != room.getNrOfColumns()) {
+                if(seatArray[i][j].isReserved() == false && j > 0 && j < room.getNrOfColumns() - 1) {
                     if(seatArray[i][j-1].isReserved() && seatArray[i][j+1].isReserved()) return false;
                 }
             }
