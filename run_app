@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run the application
-./mvnw spring-boot:run &
+./mvnw spring-boot:start
 
 # Load database:
 
@@ -35,3 +35,6 @@ curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"sh
 # 5. The user chooses seats, and gives the name of the person doing the reservation (name and surname).
 # 6. The system gives back the total amount to pay and reservation expiration time.
 #curl -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "Anna", "surname": "Chrabąszcz", "ticketType": "adult", "showingId":1}]'
+
+# stop the application
+#./mvnw spring-boot:stop

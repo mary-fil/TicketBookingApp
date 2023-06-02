@@ -10,6 +10,9 @@ The project includes features such as seat reservation, ticket pricing based on 
 It also supports the creation and management of rooms with configurable number of rows and columns.
 The project aims to provide a user-friendly and efficient platform for booking movie tickets at the multiplex theater.
 
+API documentation was generated using Springdoc-openapi library and can be accesses via:
+<http://localhost:8080/swagger-ui/index.html>
+
 ## Business scenario (use case)
 
 1. The user selects the day and the time when he/she would like to see the movie.
@@ -49,3 +52,8 @@ Reservation applies to at least one seat.
 * More information about the classes is provided in the code in the format javadoc.
 
 ## How to build and run the project
+
+## Ideas to implement in the future
+
+* Create class user to store information about user's reservations. For example if user creates a reservation more than one time,
+total amount to pay would be stored in database and would be increased every time user creates new reservation.
