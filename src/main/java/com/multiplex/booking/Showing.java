@@ -33,15 +33,28 @@ public class Showing {
     }
 
     Showing(LocalDateTime showingTime, String movieTitle, Room room) {
-        //room.showings.add(this);
 
         this.showingTime = showingTime;
         this.movieTitle = movieTitle;
         this.room = room;
-        this.seats = generateSeats(room.getNrOfRows(), room.getNrOfColumns());
+        //this.seats = generateSeats(room.getNrOfRows(), room.getNrOfColumns());
     }
 
-    private Set<Seat> generateSeats(int numRows, int numColumns) {
+    // public Set<Seat> generateSeats(int numRows, int numColumns) {
+    //     // TODO Czy potrzebne?
+    //     Set<Seat> generatedSeats = new HashSet<>();
+
+    //     for (int row = 1; row <= numRows; row++) {
+    //         for (int column = 1; column <= numColumns; column++) {
+    //             Seat seat = new Seat(row, column, false, this.getId());
+    //             generatedSeats.add(seat);
+    //         }
+    //     }
+
+    //     return generatedSeats;
+    // }
+
+    public void generateSeats(int numRows, int numColumns) {
         Set<Seat> generatedSeats = new HashSet<>();
 
         for (int row = 1; row <= numRows; row++) {
@@ -50,40 +63,39 @@ public class Showing {
                 generatedSeats.add(seat);
             }
         }
-
-        return generatedSeats;
+        this.seats = generatedSeats;
     }
 
-    boolean isValid(){
+    boolean isValid() {
 
-        // create multidimensional array
+        // Assume the room is rectangular
         Seat[][] seatArray = new Seat[room.getNrOfRows()][room.getNrOfColumns()];
-        
-        for(int i = 1; i <= room.getNrOfRows(); i++){
-            for(int j = 1; j <= room.getNrOfColumns(); j++){
 
-                // find seat by column and by row
+        for (int i = 1; i <= room.getNrOfRows(); i++) {
+            for (int j = 1; j <= room.getNrOfColumns(); j++) {
+
+                // Find a seat by column and by row
                 for (Seat seat : seats) {
                     if (seat.getRow_nr() == i && seat.getColumn_nr() == j) {
-                        seatArray[i-1][j-1] = seat;
+                        seatArray[i - 1][j - 1] = seat;
                         break;
                     }
                 }
             }
         }
 
-        //find not reserved seat and check if gap is 1
+        // Find a seat not reserved and check if gap is 1
+        for (int i = 0; i < room.getNrOfRows(); i++) {
 
-        for(int i = 0; i < room.getNrOfRows(); i++){
+            for (int j = 0; j < room.getNrOfColumns(); j++) {
 
-            for(int j = 0; j < room.getNrOfColumns(); j++){
-
-                if(seatArray[i][j].isReserved() == false && j > 0 && j < room.getNrOfColumns() - 1) {
-                    if(seatArray[i][j-1].isReserved() && seatArray[i][j+1].isReserved()) return false;
+                if (seatArray[i][j].isReserved() == false && j > 0 && j < room.getNrOfColumns() - 1) {
+                    if (seatArray[i][j - 1].isReserved() && seatArray[i][j + 1].isReserved())
+                        return false;
                 }
             }
         }
-        
+
         return true;
     }
 

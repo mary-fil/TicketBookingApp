@@ -30,6 +30,13 @@ class BookingAdvice {
     }
 
     @ResponseBody
+    @ExceptionHandler(RoomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    String RoomNotFound(CannotReserveException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseBody
     @ExceptionHandler(CannotReserveException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     String CannotReserveHandler(CannotReserveException ex) {

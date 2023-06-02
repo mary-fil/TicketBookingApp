@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Run the application
+./mvnw spring-boot:run &
+
+# Load database:
+
+# screening rooms
+curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":1, "nrOfRows":5, "nrOfColumns": 5}'
+curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":2, "nrOfRows":6, "nrOfColumns": 6}'
+curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":3, "nrOfRows":7, "nrOfColumns": 7}'
+curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":4, "nrOfRows":8, "nrOfColumns": 8}'
+
+# screenings per room (showings)
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T16:00:00", "movieTitle":"Spiderman", "room":{"id":1}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T18:30:00", "movieTitle":"Frozen 2", "room":{"id":1}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T16:30:00", "movieTitle":"Interstellar", "room":{"id":2}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T19:30:00", "movieTitle":"Interstellar", "room":{"id":2}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T17:30:00", "movieTitle":"Dune", "room":{"id":3}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T20:00:00", "movieTitle":"No time to die", "room":{"id":3}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T15:30:00", "movieTitle":"Glass Onion", "room":{"id":4}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T18:00:00", "movieTitle":"Dune", "room":{"id":4}}'
+curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-25T20:00:00", "movieTitle":"Top Gun - Maverick", "room":{"id":4}}'
+
+# use case scenario
+
+# 1. The user selects the day and the time when he/she would like to see the movie.
+#curl -X GET localhost:8080/showingsByInterval/"2023-07-24T20:00:00"

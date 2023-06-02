@@ -1,5 +1,7 @@
 package com.multiplex.booking;
 
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -13,9 +15,6 @@ public class Room {
     private int nrOfRows;
     private int nrOfColumns;
 
-    // @OneToMany(mappedBy = "room")
-    // public List<Showing> showings = new ArrayList<>();
-    
     public Room(){
     }
 
@@ -23,6 +22,14 @@ public class Room {
         this.roomNr = roomNr;
         this.nrOfRows = nrOfRows;
         this.nrOfColumns = nrOfColumns;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public int getRoomNr() {
@@ -44,4 +51,18 @@ public class Room {
         this.nrOfColumns = nrOfColumns;
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        if (this == o)
+            return true;
+        if (!(o instanceof Room))
+            return false;
+
+        Room room = (Room) o;
+
+        return Objects.equals(this.id, room.id) && Objects.equals(this.nrOfColumns, room.nrOfColumns)
+                && Objects.equals(this.nrOfRows, room.nrOfRows);
+
+    }
 }

@@ -2,13 +2,12 @@ package com.multiplex.booking;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Sort;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,35 +16,91 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import jakarta.validation.Valid;
 
 @RestController
 class BookingController {
     private final ShowingRepository showings;
-    final int hour = 1;
-    final double adultTicket = 25;
-    final double studentTicket = 18;
-    final double childTicket = 12.5;
+    private final RoomRepository rooms;
+    static final int TIME_INTERVAL = 2;
+    static final double ADULT_PRICE = 25;
+    static final double STUDENT_PRICE = 18;
+    static final double CHILD_PRICE = 12.5;
 
-    BookingController(ShowingRepository showings) {
+    BookingController(ShowingRepository showings, RoomRepository rooms) {
         this.showings = showings;
+        this.rooms = rooms;
     }
 
-    // Aggregate root
+    @Operation(summary="Return a list of all showings")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Returned the list of showings", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "404", description = "List of showings not found", 
+            content = @Content) })
     @GetMapping("/showings")
-    List<Showing> all() {
+    List<Showing> allShowings() {
         Sort sorted = Sort.by(Sort.Direction.ASC, "movieTitle", "showingTime");
         return showings.findAll(sorted);
     }
 
+    @Operation(summary="Return a list of all rooms")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Returned the list of rooms", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Room.class)) }),
+        @ApiResponse(responseCode = "404", description = "List of rooms not found", 
+            content = @Content) })
+    @GetMapping("/rooms")
+    List<Room> allRooms() {
+        return rooms.findAll();
+    }
+
+    @Operation(summary="Create a new showing")
     @PostMapping("/showings")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Created new showing", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid json supplied", 
+            content = @Content)})
     Showing newShowing(@RequestBody Showing newShowing) {
+        Room room = rooms.findById(newShowing.getRoom().getId())
+            .orElseThrow(() -> new RoomNotFoundException(newShowing.getRoom().getId()));
+        newShowing.setRoom(room);
+        newShowing.generateSeats(room.getNrOfRows(),room.getNrOfColumns());
         return showings.save(newShowing);
     }
 
-    // Single item
+    @Operation(summary="Create a new room")
+    @PostMapping("/rooms")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Created new room", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Room.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid json supplied", 
+            content = @Content)})
+    Room newRoom(@RequestBody Room newRoom) {
+        return rooms.save(newRoom);
+    }
 
+    @Operation(summary="Update showing")
     @PutMapping("/showingsById/{id}")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Updated the showing", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid id supplied", 
+            content = @Content), 
+        @ApiResponse(responseCode = "404", description = "Showing not found", 
+            content = @Content) })
     Showing replaceShowing(@RequestBody Showing newShowing, @PathVariable Long id) {
 
         return showings.findById(id)
@@ -61,33 +116,63 @@ class BookingController {
                 });
     }
 
+    @Operation(summary="Delete showing")
     @DeleteMapping("/showingsById/{id}")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Deleted the showing", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid id supplied", 
+            content = @Content), 
+        @ApiResponse(responseCode = "404", description = "Showing not found", 
+            content = @Content) })
     void deleteShowing(@PathVariable Long id) {
         showings.deleteById(id);
     }
 
-    // user selects the day and the time when he/she would like to see a movie
-    // change the format of date?
-
+    @Operation(summary="Return a list of showings starting at a specified time")
     @GetMapping("/showingsByTime/{dateTime}")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Found the showing", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid date supplied", 
+            content = @Content), 
+        @ApiResponse(responseCode = "404", description = "Showing not found", 
+            content = @Content) })
     public List<Showing> getShowingByTime(@PathVariable("dateTime") LocalDateTime dateTime) {
         return showings.findByShowingTime(dateTime);
     }
 
-    // system lists movies available in the given time interval - everything
+    // system lists movies available in the given time interval
     // variable hour -> chosen time interval
+    @Operation(summary="Return a list of showings starting in the time interval of +/- one hour")
     @GetMapping("/showingsByInterval/{dateTime}")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Found the showings in the time interval of +/- one hour", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid date supplied", 
+            content = @Content), 
+        @ApiResponse(responseCode = "404", description = "Showings not found", 
+            content = @Content) })
     public List<Showing> getShowingsWithinTimeRange(@PathVariable("dateTime") LocalDateTime dateTime) {
-        LocalDateTime startTime = dateTime.minusHours(hour);
-        LocalDateTime endTime = dateTime.plusHours(hour);
+        LocalDateTime startTime = dateTime.minusHours(TIME_INTERVAL);
+        LocalDateTime endTime = dateTime.plusHours(TIME_INTERVAL);
         return showings.findByShowingTimeBetween(startTime, endTime);
     }
 
     // user chooses a particular screening
-    // what if there are two screenings with the same title?
-    // then -> choose by id?
-
+    @Operation(summary="Return a showing specified by id")
     @GetMapping("/showingsById/{id}")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Found the showing", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Showing.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid id supplied", 
+            content = @Content), 
+        @ApiResponse(responseCode = "404", description = "Showing not found", 
+            content = @Content) })
     Showing one(@PathVariable Long id) {
 
         return showings.findById(id).orElseThrow(() -> new ShowingNotFoundException(id));
@@ -95,17 +180,20 @@ class BookingController {
 
     // user chooses seats, and gives the name of the person doing the reservation
     // (name and surname)
-    // TO DO
-    // how to handle total amount? another class user?
-
+    @Operation(summary="Reservation of seat(s) by id. Id of seat, name, surname and ticket type is required.")
     @PutMapping("/ReservationOfSeats")
+    @ApiResponses(value = { 
+        @ApiResponse(responseCode = "200", description = "Created new reservation", 
+            content = { @Content(mediaType = "application/json", 
+            schema = @Schema(implementation = Room.class)) }),
+        @ApiResponse(responseCode = "400", description = "Invalid json supplied", 
+            content = @Content)})
     ReservationResponse replaceSeat(@Valid @RequestBody List<Seat> newSeats) {
 
         Showing showing = showings.findById(newSeats.get(0).getShowingId())
         .orElseThrow(() -> new ShowingNotFoundException(newSeats.get(0).getShowingId()));
 
         // check time, reservation should be before the movie
-
         Duration duration = Duration.between(LocalDateTime.now(),showing.getShowingTime());
         long minutes = duration.toMinutes();
 
@@ -123,17 +211,20 @@ class BookingController {
             if (seatOptional.isPresent()) {
                 Seat seat = seatOptional.get();
 
-                // if it is already reserved
+                // seat cannot be reserved, name, surname and ticket type is required
                 if(seat.isReserved()) throw new CannotReserveException();
+                if(newSeat.getName() == null) throw new CannotReserveException();
+                if(newSeat.getSurname() == null) throw new CannotReserveException();
+                if(newSeat.getTicketType() == null) throw new CannotReserveException();
 
                 seat.setReserved(true);
                 seat.setName(newSeat.getName());
                 seat.setSurname(newSeat.getSurname());
                 seat.setTicketType(newSeat.getTicketType());
 
-                if(newSeat.getTicketType().equals("adult")) total += adultTicket;
-                if(newSeat.getTicketType().equals("student")) total += studentTicket;
-                if(newSeat.getTicketType().equals("child")) total += childTicket;
+                if(newSeat.getTicketType().equals("adult")) total += ADULT_PRICE;
+                if(newSeat.getTicketType().equals("student")) total += STUDENT_PRICE;
+                if(newSeat.getTicketType().equals("child")) total += CHILD_PRICE;
 
             } else {
                 throw new SeatNotFoundException(newSeat.getId());
@@ -151,74 +242,4 @@ class BookingController {
         return response;
     }
 
-    @PutMapping("/ReservationBySeatId/{id}")
-    Showing replaceSeat(@RequestBody Seat newSeat, @PathVariable Long id) {
-
-        return showings.findById(newSeat.getShowingId())
-            .map(showing -> {
-                // Retrieve the set of seats in the showing
-                Set<Seat> seats = showing.getSeats();
-
-                // Find the seat with the specified ID
-                Optional<Seat> seatOptional = seats.stream()
-                    .filter(seat -> seat.getId().equals(id))
-                    .findFirst();
-
-                if (seatOptional.isPresent()) {
-                    Seat seat = seatOptional.get();
-                    // Update the seat properties
-                    seat.setReserved(true);
-                    seat.setName(newSeat.getName());
-                    seat.setSurname(newSeat.getSurname());
-                    seat.setTicketType(newSeat.getTicketType());
-                } else {
-                    // Handle the case when the seat is not found
-                    throw new SeatNotFoundException(id);
-                }
-
-                return showings.save(showing);
-            })
-            .orElseThrow(() -> new ShowingNotFoundException(newSeat.getShowingId()));
-    }
-
-    @PutMapping("/showings/{id}/{row_nr}/{column_nr}/{name}/{surname}/{ticketType}")
-    public Showing getReservation(
-        @PathVariable("id") Long id,
-        @PathVariable("row_nr") int row_nr,
-        @PathVariable("column_nr") int column_nr,
-        @PathVariable("name") String name,
-        @PathVariable("surname") String surname,
-        @PathVariable("ticketType") String ticketType) {
-
-        // Retrieve showing based on movie title and room ID
-        Showing showing = showings.findById(id).orElseThrow(() -> new ShowingNotFoundException(id));
-        
-        // Retrieve the list of seats in the showing
-        Set<Seat> seats = showing.getSeats();
-        
-         // Find the seat with the specified row and column
-        Optional<Seat> seatOptional = seats.stream()
-        .filter(seat -> seat.getRow_nr() == row_nr && seat.getColumn_nr() == column_nr)
-        .findFirst();
-
-        if (seatOptional.isPresent()) {
-            Seat seat = seatOptional.get();
-
-            // Update the seat's information
-            seat.setReserved(true);
-            // TO DO
-            //User user = findByNameAndSurname(name, surname);
-            seat.setName(name);
-            seat.setSurname(surname);
-        } else {
-            // Handle the case when the seat is not found
-            // TO DO
-            //throw new SeatNotFoundException(row_nr, column_nr);
-        }
-
-        // Save the updated showing
-        showings.save(showing);
-        
-        return showing;
-    }
 }
