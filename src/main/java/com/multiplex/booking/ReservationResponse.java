@@ -3,8 +3,10 @@ package com.multiplex.booking;
 import java.time.LocalDateTime;
 
 /**
- * TODO
- * 
+ * When user makes a reservation object ReservationResponse will be returned by application
+ * ReservationResponse has two attributes: total and reservationExpirationTime
+ * total = total amount to pay for tickets
+ * reservationExpirationTime = expiration time of the reservation (start of movie substracted by 15 minutes)
  */
 class ReservationResponse {
     private double total;

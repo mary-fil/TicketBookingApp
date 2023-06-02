@@ -10,12 +10,21 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Class Seat that will be used to generate objects "seat"
+ * Each seat will have its id, attributes used to store information where certain seat is placed within the room (rowNr and columnNr) and boolean to check if seat is reserved.
+ * Seat will also store information about the person that reserved the seat (name and surname) as well as the type of ticket the person choose 
+ * and information to which showing they are connected.
+ * Requirements: 
+ * - name and surname should each be at least three characters long, starting with a capital letter.
+ * - the surname could consist of two parts separated with a single dash, in this case the second part should also start with a capital letter.
+ */
 @Entity
 @Table(name = "seats")
 public class Seat {
     private @Id @GeneratedValue Long id;
-    private int row_nr;
-    private int column_nr;
+    private int rowNr;
+    private int columnNr;
     private boolean reserved;
 
     @Size(min = 3, message = "Name must be at least 3 characters long")
@@ -23,7 +32,7 @@ public class Seat {
     private String name;
 
     @Size(min = 3, message = "Surname must be at least 3 characters long")
-    @Pattern(regexp = "^[A-Z].*", message = "Name must start with a capital letter")
+    @Pattern(regexp = "^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)?$", message = "Name must start with a capital letter")
     private String surname;
 
     private String ticketType;
@@ -34,14 +43,14 @@ public class Seat {
     public Seat() {
     }
 
-    public Seat(int row_nr,int column_nr) {
-        this.row_nr = row_nr;
-        this.column_nr = column_nr;
+    public Seat(int rowNr,int columnNr) {
+        this.rowNr = rowNr;
+        this.columnNr = columnNr;
     }
 
-    public Seat(int row_nr, int column_nr, boolean reserved, Long showingId) {
-        this.row_nr = row_nr;
-        this.column_nr = column_nr;
+    public Seat(int rowNr, int columnNr, boolean reserved, Long showingId) {
+        this.rowNr = rowNr;
+        this.columnNr = columnNr;
         this.reserved = reserved;
         this.showingId = showingId;
     }
@@ -54,20 +63,20 @@ public class Seat {
         this.id = id;
     }
 
-    public int getRow_nr() {
-        return row_nr;
+    public int getrowNr() {
+        return rowNr;
     }
 
-    public void setRow_nr(int row_nr) {
-        this.row_nr = row_nr;
+    public void setrowNr(int rowNr) {
+        this.rowNr = rowNr;
     }
 
-    public int getColumn_nr() {
-        return column_nr;
+    public int getcolumnNr() {
+        return columnNr;
     }
 
-    public void setColumn_nr(int column_nr) {
-        this.column_nr = column_nr;
+    public void setcolumnNr(int columnNr) {
+        this.columnNr = columnNr;
     }
 
     public boolean isReserved() {
@@ -118,7 +127,7 @@ public class Seat {
             return false;
         Seat seat = (Seat) o;
 
-        return Objects.equals(this.column_nr, seat.column_nr)
-        && Objects.equals(this.row_nr, seat.row_nr);
+        return Objects.equals(this.columnNr, seat.columnNr)
+        && Objects.equals(this.rowNr, seat.rowNr);
     }
 }

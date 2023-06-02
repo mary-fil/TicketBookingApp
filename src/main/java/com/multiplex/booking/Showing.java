@@ -14,6 +14,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * Class Showing that will be used to generate objects "showing"
+ * Each showing will have its id, time of the showing and what title of movie which will be played.
+ * Showing will be connected to the room where the movie will be played and set of seats that are in this room. Each seat stores futher information.
+ * Set of seats will be generated based on the nr of columns and nr of rows of the room that was assigned to the showing.
+ */
 @Entity
 @Table(name = "showings")
 public class Showing {
@@ -37,22 +43,21 @@ public class Showing {
         this.showingTime = showingTime;
         this.movieTitle = movieTitle;
         this.room = room;
-        //this.seats = generateSeats(room.getNrOfRows(), room.getNrOfColumns());
+        this.seats = generateSeatsForConstructor(room.getNrOfRows(), room.getNrOfColumns());
     }
 
-    // public Set<Seat> generateSeats(int numRows, int numColumns) {
-    //     // TODO Czy potrzebne?
-    //     Set<Seat> generatedSeats = new HashSet<>();
+    public Set<Seat> generateSeatsForConstructor(int numRows, int numColumns) {
+        Set<Seat> generatedSeats = new HashSet<>();
 
-    //     for (int row = 1; row <= numRows; row++) {
-    //         for (int column = 1; column <= numColumns; column++) {
-    //             Seat seat = new Seat(row, column, false, this.getId());
-    //             generatedSeats.add(seat);
-    //         }
-    //     }
+        for (int row = 1; row <= numRows; row++) {
+            for (int column = 1; column <= numColumns; column++) {
+                Seat seat = new Seat(row, column, false, this.getId());
+                generatedSeats.add(seat);
+            }
+        }
 
-    //     return generatedSeats;
-    // }
+        return generatedSeats;
+    }
 
     public void generateSeats(int numRows, int numColumns) {
         Set<Seat> generatedSeats = new HashSet<>();
@@ -76,7 +81,7 @@ public class Showing {
 
                 // Find a seat by column and by row
                 for (Seat seat : seats) {
-                    if (seat.getRow_nr() == i && seat.getColumn_nr() == j) {
+                    if (seat.getrowNr() == i && seat.getcolumnNr() == j) {
                         seatArray[i - 1][j - 1] = seat;
                         break;
                     }

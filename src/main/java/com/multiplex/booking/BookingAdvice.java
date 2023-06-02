@@ -12,6 +12,14 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handling messages returned by exceptions:
+ * ShowingNotFoundException
+ * SeatNotFoundException
+ * RoomNotFoundException
+ * CannotReserveException
+ * ConstraintViolationException
+ */
 @ControllerAdvice
 class BookingAdvice {
     

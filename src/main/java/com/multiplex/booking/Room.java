@@ -7,6 +7,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * Class Room that will be used to generate objects "room"
+ * Each room will have its id, room number, number of rows and number of columns in the room
+ */
 @Entity
 @Table(name = "rooms")
 public class Room {

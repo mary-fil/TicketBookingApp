@@ -2,7 +2,6 @@ package com.multiplex.booking;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -145,11 +144,11 @@ class BookingController {
     }
 
     // system lists movies available in the given time interval
-    // variable hour -> chosen time interval
-    @Operation(summary="Return a list of showings starting in the time interval of +/- one hour")
+    // variable TIME_INTERVAL -> chosen time interval
+    @Operation(summary="Return a list of showings starting in the time interval of +/- 2 hours")
     @GetMapping("/showingsByInterval/{dateTime}")
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Found the showings in the time interval of +/- one hour", 
+        @ApiResponse(responseCode = "200", description = "Found the showings in the time interval of +/- 2 hours", 
             content = { @Content(mediaType = "application/json", 
             schema = @Schema(implementation = Showing.class)) }),
         @ApiResponse(responseCode = "400", description = "Invalid date supplied", 
