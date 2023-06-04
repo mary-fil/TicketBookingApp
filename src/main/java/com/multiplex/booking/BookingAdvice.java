@@ -18,6 +18,7 @@ import java.util.List;
  * SeatNotFoundException
  * RoomNotFoundException
  * CannotReserveException
+ * WrongInputHandlerException
  * ConstraintViolationException
  */
 @ControllerAdvice
@@ -40,14 +41,21 @@ class BookingAdvice {
     @ResponseBody
     @ExceptionHandler(RoomNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String RoomNotFound(CannotReserveException ex) {
+    String RoomNotFound(RoomNotFoundException ex) {
         return ex.getMessage();
     }
 
     @ResponseBody
     @ExceptionHandler(CannotReserveException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     String CannotReserveHandler(CannotReserveException ex) {
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(WrongInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String WrongInputHandler(WrongInputException ex) {
         return ex.getMessage();
     }
 

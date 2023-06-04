@@ -177,6 +177,21 @@ class BookingController {
         return showings.findById(id).orElseThrow(() -> new ShowingNotFoundException(id));
     }
 
+    @GetMapping("/seatByShowingIdRowColumn/{id}/{rowNr}/{columnNr}")
+    Seat one(@PathVariable Long id, @PathVariable int rowNr, @PathVariable int columnNr) {
+
+        Showing showing = showings.findById(id) .orElseThrow(() -> new ShowingNotFoundException(id));
+
+        Set<Seat> seats = showing.getSeats();
+        Seat foundSeat = new Seat();
+
+        for (Seat a : seats) {
+            if(a.getrowNr() == rowNr && a.getcolumnNr() == columnNr) foundSeat = a;
+        }
+
+        return foundSeat;
+    }
+
     // user chooses seats, and gives the name of the person doing the reservation
     // (name and surname)
     @Operation(summary="Reservation of seat(s) by id. Id of seat, name, surname and ticket type is required.")
@@ -215,13 +230,13 @@ class BookingController {
                 String ticketType = newSeat.getTicketType();
 
                 // seat cannot be reserved, name, surname and ticket type is required
-                if(seat.isReserved()) throw new CannotReserveException();
-                if(name == null) throw new CannotReserveException();
-                if(surname == null) throw new CannotReserveException();
-                if(ticketType == null) throw new CannotReserveException();
+                if(seat.isReserved()) throw new WrongInputException();
+                if(name == null) throw new WrongInputException();
+                if(surname == null) throw new WrongInputException();
+                if(ticketType == null) throw new WrongInputException();
 
                 // name must start with an uppercase
-                if(!Character.isUpperCase(name.charAt(0))) throw new CannotReserveException();
+                if(!Character.isUpperCase(name.charAt(0))) throw new WrongInputException();
 
                 // surname must start with an uppercase and could consist of two parts separated with
                 // a single dash, in this case the second part should also start with a capital letter
@@ -229,11 +244,11 @@ class BookingController {
                     String[] surname_parts = surname.split("-");
                     String first_surname = surname_parts[0];
                     String second_surname = surname_parts[1];
-                    if(!Character.isUpperCase(first_surname.charAt(0))) throw new CannotReserveException();
-                    if(!Character.isUpperCase(second_surname.charAt(0))) throw new CannotReserveException();
+                    if(!Character.isUpperCase(first_surname.charAt(0))) throw new WrongInputException();
+                    if(!Character.isUpperCase(second_surname.charAt(0))) throw new WrongInputException();
                 }
                 else{
-                    if(!Character.isUpperCase(surname.charAt(0))) throw new CannotReserveException();
+                    if(!Character.isUpperCase(surname.charAt(0))) throw new WrongInputException();
                 }
 
                 seat.setReserved(true);
