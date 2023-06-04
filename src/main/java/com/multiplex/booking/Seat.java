@@ -28,11 +28,11 @@ public class Seat {
     private boolean reserved;
 
     @Size(min = 3, message = "Name must be at least 3 characters long")
-    @Pattern(regexp = "^[A-Z].*", message = "Name must start with a capital letter")
+    //@Pattern(regexp = "^[A-Z][A-Za-z]*", message = "Name must start with a capital letter")
     private String name;
 
     @Size(min = 3, message = "Surname must be at least 3 characters long")
-    @Pattern(regexp = "^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)?$", message = "Name must start with a capital letter")
+    //@Pattern(regexp = "^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)?$", message = "Surname must start with a capital letter")
     private String surname;
 
     private String ticketType;

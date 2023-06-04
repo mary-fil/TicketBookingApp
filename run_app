@@ -3,38 +3,53 @@
 # Run the application
 ./mvnw spring-boot:start
 
+function run_request_POST {
+    curl -s -X  POST localhost:8080/"$1" -H 'Content-type:application/json' -d "$2" #|jq
+    #read -p "Press enter to continue"
+}
+
 # Load database:
 
 # screening rooms
-curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":1, "nrOfRows":5, "nrOfColumns": 5}'
-curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":2, "nrOfRows":6, "nrOfColumns": 6}'
-curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":3, "nrOfRows":7, "nrOfColumns": 7}'
-curl -X POST localhost:8080/rooms -H 'Content-type:application/json' -d '{"roomNr":4, "nrOfRows":8, "nrOfColumns": 8}'
+echo "Initialization of database: rooms"
+run_request_POST rooms '{"roomNr":1, "nrOfRows":5, "nrOfColumns": 5}'
+run_request_POST rooms '{"roomNr":1, "nrOfRows":5, "nrOfColumns": 5}' 
+run_request_POST rooms '{"roomNr":2, "nrOfRows":6, "nrOfColumns": 6}'
+run_request_POST rooms '{"roomNr":3, "nrOfRows":7, "nrOfColumns": 7}'
+run_request_POST rooms '{"roomNr":4, "nrOfRows":8, "nrOfColumns": 8}'
 
-# screenings per room (showings)
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T16:00:00", "movieTitle":"Spiderman", "room":{"id":1}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T18:30:00", "movieTitle":"Frozen 2", "room":{"id":1}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T16:30:00", "movieTitle":"Interstellar", "room":{"id":2}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T19:30:00", "movieTitle":"Interstellar", "room":{"id":2}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T17:30:00", "movieTitle":"Dune", "room":{"id":3}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T20:00:00", "movieTitle":"No time to die", "room":{"id":3}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T15:30:00", "movieTitle":"Glass Onion", "room":{"id":4}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-24T18:00:00", "movieTitle":"Dune", "room":{"id":4}}'
-curl -X POST localhost:8080/showings -H 'Content-type:application/json' -d '{"showingTime":"2023-07-25T20:00:00", "movieTitle":"Top Gun - Maverick", "room":{"id":4}}'
+# # screenings per room (showings)
+echo "Initialization of database: showings"
+run_request_POST showings '{"showingTime":"2023-07-24T16:00:00", "movieTitle":"Spiderman", "room":{"id":1}}'
+run_request_POST showings '{"showingTime":"2023-07-24T18:30:00", "movieTitle":"Frozen 2", "room":{"id":1}}'
+run_request_POST showings '{"showingTime":"2023-07-24T16:30:00", "movieTitle":"Interstellar", "room":{"id":2}}'
+run_request_POST showings '{"showingTime":"2023-07-24T19:30:00", "movieTitle":"Interstellar", "room":{"id":2}}'
+run_request_POST showings '{"showingTime":"2023-07-24T17:30:00", "movieTitle":"Dune", "room":{"id":3}}'
+run_request_POST showings '{"showingTime":"2023-07-24T20:00:00", "movieTitle":"No time to die", "room":{"id":3}}'
+run_request_POST showings '{"showingTime":"2023-07-24T15:30:00", "movieTitle":"Glass Onion", "room":{"id":4}}'
+run_request_POST showings '{"showingTime":"2023-07-24T18:00:00", "movieTitle":"Dune", "room":{"id":4}}'
+run_request_POST showings '{"showingTime":"2023-07-25T20:00:00", "movieTitle":"Top Gun - Maverick", "room":{"id":4}}'
 
 # use case scenario
 
 # 1. The user selects the day and the time when he/she would like to see the movie.
 # 2. The system lists movies available in the given time interval - title and screening times.
-#curl -X GET localhost:8080/showingsByInterval/"2023-07-24T20:00:00"
+curl -s -X GET localhost:8080/showingsByInterval/2023-07-24T20:00:00 |jq
+read -p "Press enter to continue"
 
 # 3. The user chooses a particular screening.
 # 4. The system gives information regarding screening room and available seats.
-#curl -X GET localhost:8080/showingsById/1
+curl -s -X GET localhost:8080/showingsById/2 |jq
+read -p "Press enter to continue"
 
 # 5. The user chooses seats, and gives the name of the person doing the reservation (name and surname).
 # 6. The system gives back the total amount to pay and reservation expiration time.
-#curl -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "Anna", "surname": "Chrabąszcz", "ticketType": "adult", "showingId":1}]'
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":29,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":2}]' |jq
+read -p "Press enter to continue"
+
+# corner cases
+
+
 
 # stop the application
 #./mvnw spring-boot:stop

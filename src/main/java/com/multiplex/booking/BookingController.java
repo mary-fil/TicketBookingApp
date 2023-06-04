@@ -210,16 +210,36 @@ class BookingController {
             if (seatOptional.isPresent()) {
                 Seat seat = seatOptional.get();
 
+                String name = newSeat.getName();
+                String surname = newSeat.getSurname();
+                String ticketType = newSeat.getTicketType();
+
                 // seat cannot be reserved, name, surname and ticket type is required
                 if(seat.isReserved()) throw new CannotReserveException();
-                if(newSeat.getName() == null) throw new CannotReserveException();
-                if(newSeat.getSurname() == null) throw new CannotReserveException();
-                if(newSeat.getTicketType() == null) throw new CannotReserveException();
+                if(name == null) throw new CannotReserveException();
+                if(surname == null) throw new CannotReserveException();
+                if(ticketType == null) throw new CannotReserveException();
+
+                // name must start with an uppercase
+                if(!Character.isUpperCase(name.charAt(0))) throw new CannotReserveException();
+
+                // surname must start with an uppercase and could consist of two parts separated with
+                // a single dash, in this case the second part should also start with a capital letter
+                if(surname.contains("-")){
+                    String[] surname_parts = surname.split("-");
+                    String first_surname = surname_parts[0];
+                    String second_surname = surname_parts[1];
+                    if(!Character.isUpperCase(first_surname.charAt(0))) throw new CannotReserveException();
+                    if(!Character.isUpperCase(second_surname.charAt(0))) throw new CannotReserveException();
+                }
+                else{
+                    if(!Character.isUpperCase(surname.charAt(0))) throw new CannotReserveException();
+                }
 
                 seat.setReserved(true);
-                seat.setName(newSeat.getName());
-                seat.setSurname(newSeat.getSurname());
-                seat.setTicketType(newSeat.getTicketType());
+                seat.setName(name);
+                seat.setSurname(surname);
+                seat.setTicketType(ticketType);
 
                 if(newSeat.getTicketType().equals("adult")) total += ADULT_PRICE;
                 if(newSeat.getTicketType().equals("student")) total += STUDENT_PRICE;
