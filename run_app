@@ -142,9 +142,11 @@ SEAT5=$(curl -s -X GET localhost:8080/seatByShowingIdRowColumn/1/1/5 |jq .id)
 # no single place left between two already reserved seats
 curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d "[{\"id\":$SEAT1, \"name\": \"Basia\", \"surname\": \"Kowalska\", \"ticketType\": \"adult\", \"showingId\":1}]"
 curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d "[{\"id\":$SEAT5, \"name\": \"Basia\", \"surname\": \"Kowalska\", \"ticketType\": \"adult\", \"showingId\":1}]"
-echo "\nNo single place left between two already reserved seats case:"
+echo
+echo "No single place left between two already reserved seats case:"
 echo "Room 1 has 5 rows and 5 columns, let's suppose that in row 1, seat 1 and seat 5 are reserved."
-echo "If user would like to reserve seat 2 and seat 3 from the same row, system would not let it happen.\n"
+echo "If user would like to reserve seat 2 and seat 3 from the same row, system would not let it happen."
+echo
 
 echo  "JSON input:'[{"id":$SEAT2, "name": "Janek", "surname": "Wolski", "ticketType": "adult", "showingId":1},{"id":$SEAT3, "name": "Janek", "surname": "Wolski", "ticketType": "adult", "showingId":1]'"
 curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d "[{\"id\":$SEAT2, \"name\": \"Janek\", \"surname\": \"Wolski\", \"ticketType\": \"adult\", \"showingId\":1},{\"id\":$SEAT3, \"name\": \"Janek\", \"surname\": \"Wolski\", \"ticketType\": \"adult\", \"showingId\":1}]"
@@ -154,8 +156,9 @@ next_line
 echo "Reservation of seats when there are less than 15 minutes till the start of the movie.\n"
 NOW=$(date +"%Y-%m-%dT%H:%M")
 NOW_PLUS10=$(date +"%Y-%m-%dT%H:%M" --date="+ 10 minutes")
-run_request_POST showings '{"showingTime":"$NOW_PLUS10", "movieTitle":"Spiderman 3", "room":{"id":5}}'
-echo  "JSON input: '[{"id":412, "name": "Franek", "surname": "Wolski", "ticketType": "adult", "showingId":10}]'\n"
+run_request_POST showings "{\"showingTime\":\"$NOW_PLUS10\", \"movieTitle\":\"Spiderman 3\", \"room\":{\"id\":5}}" > /dev/null
+echo  "JSON input: '[{"id":412, "name": "Franek", "surname": "Wolski", "ticketType": "adult", "showingId":10}]'"
+echo
 curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":412, "name": "Franek", "surname": "Wolski", "ticketType": "adult", "showingId":10}]'
 
 
