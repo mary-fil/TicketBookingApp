@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 /**
@@ -28,6 +27,8 @@ public class Seat {
     private boolean reserved;
 
     @Size(min = 3, message = "Name must be at least 3 characters long")
+    // Possible code improvement: Use Regex, but it may have problems with handling Polish letter correctly.
+    // No-Regex solution implemented as for now.
     //@Pattern(regexp = "^[A-Z][A-Za-z]*", message = "Name must start with a capital letter")
     private String name;
 
