@@ -1,17 +1,15 @@
 # Ticket booking app
 
-The project handles a seat reservation system for a multiplex.
+The application manages a seat reservation system for a cinema multiplex.
 
 ## Description
 
-Project was written in JVM language: Java and provides APIs for managing showings, seats, and reservations.
+Project was written in Java Spring Boot framework and provides APIs for managing showings, seats, and reservations.
+
 The system allows users to view available showings, select seats, and make reservations for movies.
 The project includes features such as seat reservation, ticket pricing based on ticket type, and validation of seat availability and reservation constraints.
 It also supports the creation and management of rooms with configurable number of rows and columns.
-The project aims to provide a user-friendly and efficient platform for booking movie tickets at the multiplex theater.
-
-API documentation was generated using Springdoc-openapi library and can be accesses via:
-<http://localhost:8080/swagger-ui/index.html>
+The project aims to provide an efficient platform for booking movie tickets at the multiplex theater.
 
 ## Business scenario (use case)
 
@@ -41,17 +39,58 @@ Reservation applies to at least one seat.
 
 ## Additional information and assumptions
 
-* Project was created using Spring Initializer.
-* Project uses H2 database and Spring Data JPA.
+* Project uses Spring Boot 3 framework to provide server management and API services.
+* Project uses Spring Data JPA and H2 in-memory database.
 * The user specifies the time using ISO 8601 format ex. "2023-07-24T20:00:00".
 * The system lists movies available in the +/- two hour time interval. This value can be changed in the code.
 * User chooses a particular screening by its ID.
 * User chooses seats by ID, user can choose more than one seat in the request.
 * System returns total amount to pay and expiration time in a json format. Total amount is calculated as a total of this particular transaction.
-* Rooms are assumed to be rectangular.
-* More information about the classes is provided in the code in the format javadoc.
+* Rooms are assumed to be rectangular (each row has the same number of seats).
+* More information about the classes is provided in the code as javadoc comments.
+* Corner cases are checked in the run_app.sh script.
 
 ## How to build and run the project
+
+* The project needs Java 17
+
+To build the application, in the command line enter:
+
+```bash
+./mvnw install
+```
+
+To run the application, in the command line enter:
+
+```bash
+./mvnw spring-boot:start
+```
+
+Windows platform uses `mvnw.cmd` instead of `mvnw`.
+
+Local web server is started and listening at <http://localhost:8080>
+
+To stop the application, in the command line enter:
+
+```bash
+./mvnw spring-boot:stop
+```
+
+### Use cases testing
+
+* run_app.sh works with Shell, Unix
+
+To run script run_app.sh, in the command line enter:
+
+```bash
+./run_app
+```
+
+## API documentation
+
+API documentation is generated using Springdoc-openapi library and can be accessed via:
+<http://localhost:8080/swagger-ui/index.html>
+when application is running.
 
 ## Ideas to implement in the future
 
