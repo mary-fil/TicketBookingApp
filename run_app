@@ -4,7 +4,7 @@
 ./mvnw spring-boot:start
 
 function run_request_POST {
-    curl -s -X  POST localhost:8080/"$1" -H 'Content-type:application/json' -d "$2" #|jq
+    curl -s -X  POST localhost:8080/"$1" -H 'Content-type:application/json' -d "$2" |jq
     #read -p "Press enter to continue"
 }
 
@@ -70,69 +70,69 @@ next_line
 curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":29,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":2}]' |jq
 next_line
 
-# # corner cases
-# echo "Corner cases:"
-# next_line
+# corner cases
+echo "Corner cases:"
+next_line
 
-# # less than 3 letters in name
-# echo "Less than 3 letters in name:"
-# echo  "JSON input: '[{"id":1,"name": "An", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "An", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]' |jq
-# next_line
+# less than 3 letters in name
+echo "Less than 3 letters in name:"
+echo  "JSON input: '[{"id":1,"name": "An", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "An", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]' |jq
+next_line
 
-# # # less than 3 letters in surname
-# echo "Less than 3 letters in surname:"
-# echo  "JSON input: '[{"id":1,"name": "Ania", "surname": "Łó", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "Ania", "surname": "Łó", "ticketType": "adult", "showingId":1}]' |jq
-# next_line
+# # less than 3 letters in surname
+echo "Less than 3 letters in surname:"
+echo  "JSON input: '[{"id":1,"name": "Ania", "surname": "Łó", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "Ania", "surname": "Łó", "ticketType": "adult", "showingId":1}]' |jq
+next_line
 
-# # no capital letter in name
-# echo "No capital letter in name:"
-# echo  "JSON input: '[{"id":1,"name": "ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":19,"name": "ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'
-# next_line
+# no capital letter in name
+echo "No capital letter in name:"
+echo  "JSON input: '[{"id":1,"name": "ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":19,"name": "ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'
+next_line
 
-# # no capital letter in surname
-# echo "No capital letter in surname:"
-# echo  "JSON input: '[{"id":1,"name": "Ania", "surname": "łódzka", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":72,"name": "Ania", "surname": "łódzka", "ticketType": "adult", "showingId":3}]'
-# next_line
+# no capital letter in surname
+echo "No capital letter in surname:"
+echo  "JSON input: '[{"id":1,"name": "Ania", "surname": "łódzka", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":72,"name": "Ania", "surname": "łódzka", "ticketType": "adult", "showingId":3}]'
+next_line
 
-# # surname with two parts
-# echo "Surname with two parts:"
-# echo  "JSON input: '[{"id":1,"name": "Ania", "surname": "Łódzka-Toruńska", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "Ania", "surname": "Łódzka-Toruńska", "ticketType": "adult", "showingId":1}]' |jq
-# next_line
+# surname with two parts
+echo "Surname with two parts:"
+echo  "JSON input: '[{"id":1,"name": "Ania", "surname": "Łódzka-Toruńska", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":1,"name": "Ania", "surname": "Łódzka-Toruńska", "ticketType": "adult", "showingId":1}]' |jq
+next_line
 
-# # no capital letter in first part of surname
-# echo "No capital letter in first part of surname:"
-# echo  "JSON input: '[{"id":2,"name": "Ania", "surname": "łódzka-Toruńska", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":2,"name": "Ania", "surname": "łódzka-Toruńska", "ticketType": "adult", "showingId":1}]'
-# next_line
+# no capital letter in first part of surname
+echo "No capital letter in first part of surname:"
+echo  "JSON input: '[{"id":2,"name": "Ania", "surname": "łódzka-Toruńska", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":2,"name": "Ania", "surname": "łódzka-Toruńska", "ticketType": "adult", "showingId":1}]'
+next_line
 
-# # no capital letter in second part of surname
-# echo "No capital letter in second part of surname:"
-# echo  "JSON input: '[{"id":2,"name": "Ania", "surname": "Łódzka-toruńska", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":2,"name": "Ania", "surname": "Łódzka-toruńska", "ticketType": "adult", "showingId":1}]'
-# next_line
+# no capital letter in second part of surname
+echo "No capital letter in second part of surname:"
+echo  "JSON input: '[{"id":2,"name": "Ania", "surname": "Łódzka-toruńska", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":2,"name": "Ania", "surname": "Łódzka-toruńska", "ticketType": "adult", "showingId":1}]'
+next_line
 
-# # wrong seat id
-# echo "Wrong seat id:"
-# echo  "JSON input: '[{"id":200000,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":200000,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'
-# next_line
+# wrong seat id
+echo "Wrong seat id:"
+echo  "JSON input: '[{"id":200000,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":200000,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'
+next_line
 
-# # wrong showing id
-# echo "Wrong showing id:"
-# echo  "JSON input: '[{"id":2,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":100}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":2,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":100}],'
-# next_line
+# wrong showing id
+echo "Wrong showing id:"
+echo  "JSON input: '[{"id":2,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":100}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"id":2,"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":100}],'
+next_line
 
-# # missing argument 
-# echo "Missing argument:"
-# echo  "JSON input: '[{"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
-# curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'
-# next_line
+# missing argument 
+echo "Missing argument:"
+echo  "JSON input: '[{"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'"
+curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/json;charset=UTF-8' -d '[{"name": "Ania", "surname": "Łódzka", "ticketType": "adult", "showingId":1}]'
+next_line
 
 
 SEAT1=$(curl -s -X GET localhost:8080/seatByShowingIdRowColumn/1/1/1 |jq .id)
@@ -153,7 +153,7 @@ curl -s -X PUT localhost:8080/ReservationOfSeats -H 'Content-type:application/js
 next_line
 
 # date
-echo "Reservation of seats when there are less than 15 minutes till the start of the movie.\n"
+echo "Reservation of seats when there are less than 15 minutes till the start of the movie."
 NOW=$(date +"%Y-%m-%dT%H:%M")
 NOW_PLUS10=$(date +"%Y-%m-%dT%H:%M" --date="+ 10 minutes")
 run_request_POST showings "{\"showingTime\":\"$NOW_PLUS10\", \"movieTitle\":\"Spiderman 3\", \"room\":{\"id\":5}}" > /dev/null
